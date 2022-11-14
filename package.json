@@ -11,15 +11,12 @@
     "grunt-banner": "0.6.0",
     "grunt-contrib-clean": "2.0.1",
     "grunt-contrib-uglify": "5.2.2",
-    "matcha": "0.7.0",
     "mocha": "8.4.0"
   },
   "scripts": {
     "build": "grunt",
     "test": "mocha -b test",
-    "eslint": "eslint src/toposort.js test/spec.js Gruntfile.js",
-    "benchmark": "matcha benchmark/general.js",
-    "benchmark-save": "matcha -R csv benchmark/general.js > benchmark/results.csv"
+    "eslint": "eslint src/toposort.js test/spec.js Gruntfile.js"
   },
   "repository": {
     "type": "git",
