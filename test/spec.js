@@ -92,4 +92,34 @@ describe( "Toposort", function() {
         assert.deepEqual( t.sort().reverse(),
             ["jquery", "jquery-ui-core", "jquery-ui-widget", "jquery-ui-button", "underscore", "backbone", "plugin"] );
     } );
+
+    it("should fail when item is an empty string", function () {
+        var t = new Toposort();
+
+        assert.rejects( () => { t.add("", "1") }, (err) => { assert.strictEqual(err.name, "TypeError"); assert.strictEqual(err.message, "Dependent name must be given as a not empty string");} )
+    });
+
+    it("should fail when deps is an empty string", function () {
+        var t = new Toposort();
+
+        assert.rejects( () => { t.add("1", "") }, (err) => { assert.strictEqual(err.name, "TypeError"); assert.strictEqual(err.message, "Dependent name must be given as a not empty string");} )
+    });
+
+    it("should fail when deps is an empty array", function () {
+        var t = new Toposort();
+
+        assert.rejects( () => { t.add("1", [""]) }, (err) => { assert.strictEqual(err.name, "TypeError"); assert.strictEqual(err.message, "Dependent name must be given as a not empty string");} )
+    });
+
+    it( "should clear", function() {
+        var t = new Toposort();
+        var out = t.add( "1", "2" )
+
+        assert.deepEqual( out.edges, [["1","2"]] );
+        
+        var cleared = out.clear();
+
+        assert.deepEqual( cleared.edges, [] );
+    } );
+
 } );
