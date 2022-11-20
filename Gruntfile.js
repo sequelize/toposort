@@ -12,7 +12,6 @@ module.exports = function( grunt ) {
     grunt.initConfig( {
         babel:     {
             options: {
-                nonStandard:  false,
                 modules:      "umd",
                 moduleId:     "Toposort"
             },
