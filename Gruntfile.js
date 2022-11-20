@@ -12,21 +12,14 @@ module.exports = function( grunt ) {
     grunt.initConfig( {
         babel:     {
             options: {
-                ast:          false,
-                sourceMaps:   false,
                 nonStandard:  false,
-                compact:      "false",
                 modules:      "umd",
-                moduleId:     "Toposort",
-                experimental: true
+                moduleId:     "Toposort"
             },
             build:   {
                 options: {
                     loose:    "all",
                     optional: [
-                        "spec.undefinedToVoid",
-                        "minification.constantFolding",
-                        "minification.propertyLiterals",
                         "es7.classProperties"
                     ]
                 },
@@ -41,9 +34,7 @@ module.exports = function( grunt ) {
         usebanner: {
             license: {
                 options: {
-                    position:  "top",
-                    banner:    LICENSE,
-                    linebreak: true
+                    banner:    LICENSE
                 },
                 files:   {
                     src: ["./build/**/*.js"]
