@@ -12,16 +12,18 @@ module.exports = function( grunt ) {
     grunt.initConfig( {
         babel:     {
             options: {
-                modules:      "umd",
-                moduleId:     "Toposort"
+                presets: [
+                    [
+                      "@babel/preset-env",
+                      {
+                        modules: "umd"
+                      }
+                    ]
+                  ],
+                plugins: ["add-module-exports"],
+                moduleId: "Toposort"
             },
             build:   {
-                options: {
-                    loose:    "all",
-                    optional: [
-                        "es7.classProperties"
-                    ]
-                },
                 files:   [{
                     expand: true,
                     cwd:    "./src/",
