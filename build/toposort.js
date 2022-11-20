@@ -23,224 +23,206 @@
  * 
  ****/
 (function (global, factory) {
-    if (typeof define === "function" && define.amd) {
-        define("Toposort", ["exports", "module"], factory);
-    } else if (typeof exports !== "undefined" && typeof module !== "undefined") {
-        factory(exports, module);
-    } else {
-        var mod = {
-            exports: {}
-        };
-        factory(mod.exports, mod);
-        global.Toposort = mod.exports;
+  if (typeof define === "function" && define.amd) {
+    define("Toposort", ["exports"], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports);
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports);
+    global.Toposort = mod.exports;
+  }
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports["default"] = void 0;
+  function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+  function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+  function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  var Toposort = /*#__PURE__*/function () {
+    function Toposort() {
+      _classCallCheck(this, Toposort);
+      _defineProperty(this, "edges", []);
+      _defineProperty(this, "Toposort", Toposort);
     }
-})(this, function (exports, module) {
-    "use strict";
-
-    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-    var Toposort = (function () {
-        function Toposort() {
-            _classCallCheck(this, Toposort);
-
-            this.edges = [];
-            this.Toposort = Toposort;
+    _createClass(Toposort, [{
+      key: "add",
+      value:
+      /**
+       * Adds dependency edges.
+       *
+       * @since   0.1.0
+       * @param   {String} item               An dependent name. Must be an string and not empty
+       * @param   {String[]|String} [deps]    An dependency or array of dependencies
+       * @returns {Toposort}                  The Toposort instance
+       */
+      function add(item, deps) {
+        if (typeof item !== "string" || !item) {
+          throw new TypeError("Dependent name must be given as a not empty string");
         }
-
-        /**
-         * Adds dependency edges.
-         *
-         * @since   0.1.0
-         * @param   {String} item               An dependent name. Must be an string and not empty
-         * @param   {String[]|String} [deps]    An dependency or array of dependencies
-         * @returns {Toposort}                  The Toposort instance
-         */
-
-        Toposort.prototype.add = function add(item, deps) {
-            if (typeof item !== "string" || !item) {
-                throw new TypeError("Dependent name must be given as a not empty string");
+        deps = Array.isArray(deps) ? deps : [deps];
+        if (deps.length > 0) {
+          var _iterator = _createForOfIteratorHelper(deps),
+            _step;
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var dep = _step.value;
+              if (typeof dep !== "string" || !dep) {
+                throw new TypeError("Dependency name must be given as a not empty string");
+              }
+              this.edges.push([item, dep]);
             }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        } else {
+          this.edges.push([item]);
+        }
+        return this;
+      }
 
-            deps = Array.isArray(deps) ? deps : [deps];
+      /**
+       * Runs the toposorting and return an ordered array of strings
+       *
+       * @since   0.1.0
+       * @returns {String[]}  The list of items topologically sorted.
+       */
+    }, {
+      key: "sort",
+      value: function sort() {
+        var _this = this;
+        var nodes = [];
 
-            if (deps.length > 0) {
-                for (var _iterator = deps, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-                    var _ref;
-
-                    if (_isArray) {
-                        if (_i >= _iterator.length) break;
-                        _ref = _iterator[_i++];
-                    } else {
-                        _i = _iterator.next();
-                        if (_i.done) break;
-                        _ref = _i.value;
-                    }
-
-                    var dep = _ref;
-
-                    if (typeof dep !== "string" || !dep) {
-                        throw new TypeError("Dependency name must be given as a not empty string");
-                    }
-
-                    this.edges.push([item, dep]);
+        //accumulate unique nodes into a large list
+        var _iterator2 = _createForOfIteratorHelper(this.edges),
+          _step2;
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var _edge = _step2.value;
+            var _iterator5 = _createForOfIteratorHelper(_edge),
+              _step5;
+            try {
+              for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+                var _node = _step5.value;
+                if (nodes.indexOf(_node) === -1) {
+                  nodes.push(_node);
                 }
-            } else {
-                this.edges.push([item]);
+              }
+            } catch (err) {
+              _iterator5.e(err);
+            } finally {
+              _iterator5.f();
             }
+          }
 
-            return this;
+          //initialize the placement of nodes into the sorted array at the end
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+        var place = nodes.length;
+
+        //initialize the sorted array with the same length as the unique nodes array
+        var sorted = new Array(nodes.length);
+
+        //define a visitor function that recursively traverses dependencies.
+        var visit = function visit(node, predecessors) {
+          //check if a node is dependent of itself
+          if (predecessors.length !== 0 && predecessors.indexOf(node) !== -1) {
+            throw new Error("Cyclic dependency found. ".concat(node, " is dependent of itself.\nDependency chain: ").concat(predecessors.join(" -> "), " => ").concat(node));
+          }
+          var index = nodes.indexOf(node);
+
+          //if the node still exists, traverse its dependencies
+          if (index !== -1) {
+            var copy = false;
+
+            //mark the node as false to exclude it from future iterations
+            nodes[index] = false;
+
+            //loop through all edges and follow dependencies of the current node
+            var _iterator3 = _createForOfIteratorHelper(_this.edges),
+              _step3;
+            try {
+              for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                var edge = _step3.value;
+                if (edge[0] === node) {
+                  //lazily create a copy of predecessors with the current node concatenated onto it
+                  copy = copy || predecessors.concat([node]);
+
+                  //recurse to node dependencies
+                  visit(edge[1], copy);
+                }
+              }
+
+              //add the node to the next place in the sorted array
+            } catch (err) {
+              _iterator3.e(err);
+            } finally {
+              _iterator3.f();
+            }
+            sorted[--place] = node;
+          }
         };
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
 
-        /**
-         * Runs the toposorting and return an ordered array of strings
-         *
-         * @since   0.1.0
-         * @returns {String[]}  The list of items topologically sorted.
-         */
+          //ignore nodes that have been excluded
+          if (node !== false) {
+            //mark the node as false to exclude it from future iterations
+            nodes[i] = false;
 
-        Toposort.prototype.sort = function sort() {
-            var _this = this;
-
-            var nodes = [];
-
-            //accumulate unique nodes into a large list
-            for (var _iterator2 = this.edges, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-                var _ref2;
-
-                if (_isArray2) {
-                    if (_i2 >= _iterator2.length) break;
-                    _ref2 = _iterator2[_i2++];
-                } else {
-                    _i2 = _iterator2.next();
-                    if (_i2.done) break;
-                    _ref2 = _i2.value;
+            //loop through all edges and follow dependencies of the current node
+            var _iterator4 = _createForOfIteratorHelper(this.edges),
+              _step4;
+            try {
+              for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+                var edge = _step4.value;
+                if (edge[0] === node) {
+                  //recurse to node dependencies
+                  visit(edge[1], [node]);
                 }
+              }
 
-                var edge = _ref2;
-
-                for (var _iterator3 = edge, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-                    var _ref3;
-
-                    if (_isArray3) {
-                        if (_i3 >= _iterator3.length) break;
-                        _ref3 = _iterator3[_i3++];
-                    } else {
-                        _i3 = _iterator3.next();
-                        if (_i3.done) break;
-                        _ref3 = _i3.value;
-                    }
-
-                    var node = _ref3;
-
-                    if (nodes.indexOf(node) === -1) {
-                        nodes.push(node);
-                    }
-                }
+              //add the node to the next place in the sorted array
+            } catch (err) {
+              _iterator4.e(err);
+            } finally {
+              _iterator4.f();
             }
+            sorted[--place] = node;
+          }
+        }
+        return sorted;
+      }
 
-            //initialize the placement of nodes into the sorted array at the end
-            var place = nodes.length;
-
-            //initialize the sorted array with the same length as the unique nodes array
-            var sorted = new Array(nodes.length);
-
-            //define a visitor function that recursively traverses dependencies.
-            var visit = function visit(node, predecessors) {
-                //check if a node is dependent of itself
-                if (predecessors.length !== 0 && predecessors.indexOf(node) !== -1) {
-                    throw new Error("Cyclic dependency found. " + node + " is dependent of itself.\nDependency chain: " + predecessors.join(" -> ") + " => " + node);
-                }
-
-                var index = nodes.indexOf(node);
-
-                //if the node still exists, traverse its dependencies
-                if (index !== -1) {
-                    var copy = false;
-
-                    //mark the node as false to exclude it from future iterations
-                    nodes[index] = false;
-
-                    //loop through all edges and follow dependencies of the current node
-                    for (var _iterator4 = _this.edges, _isArray4 = Array.isArray(_iterator4), _i4 = 0, _iterator4 = _isArray4 ? _iterator4 : _iterator4[Symbol.iterator]();;) {
-                        var _ref4;
-
-                        if (_isArray4) {
-                            if (_i4 >= _iterator4.length) break;
-                            _ref4 = _iterator4[_i4++];
-                        } else {
-                            _i4 = _iterator4.next();
-                            if (_i4.done) break;
-                            _ref4 = _i4.value;
-                        }
-
-                        var edge = _ref4;
-
-                        if (edge[0] === node) {
-                            //lazily create a copy of predecessors with the current node concatenated onto it
-                            copy = copy || predecessors.concat([node]);
-
-                            //recurse to node dependencies
-                            visit(edge[1], copy);
-                        }
-                    }
-
-                    //add the node to the next place in the sorted array
-                    sorted[--place] = node;
-                }
-            };
-
-            for (var i = 0; i < nodes.length; i++) {
-                var node = nodes[i];
-
-                //ignore nodes that have been excluded
-                if (node !== false) {
-                    //mark the node as false to exclude it from future iterations
-                    nodes[i] = false;
-
-                    //loop through all edges and follow dependencies of the current node
-                    for (var _iterator5 = this.edges, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
-                        var _ref5;
-
-                        if (_isArray5) {
-                            if (_i5 >= _iterator5.length) break;
-                            _ref5 = _iterator5[_i5++];
-                        } else {
-                            _i5 = _iterator5.next();
-                            if (_i5.done) break;
-                            _ref5 = _i5.value;
-                        }
-
-                        var edge = _ref5;
-
-                        if (edge[0] === node) {
-                            //recurse to node dependencies
-                            visit(edge[1], [node]);
-                        }
-                    }
-
-                    //add the node to the next place in the sorted array
-                    sorted[--place] = node;
-                }
-            }
-
-            return sorted;
-        };
-
-        /**
-         * Clears edges
-         *
-         * @since   0.4.0
-         * @returns {Toposort}                  The Toposort instance
-         */
-
-        Toposort.prototype.clear = function clear() {
-            this.edges = [];
-
-            return this;
-        };
-
-        return Toposort;
-    })();
-
-    module.exports = Toposort;
+      /**
+       * Clears edges
+       *
+       * @since   0.4.0
+       * @returns {Toposort}                  The Toposort instance
+       */
+    }, {
+      key: "clear",
+      value: function clear() {
+        this.edges = [];
+        return this;
+      }
+    }]);
+    return Toposort;
+  }();
+  _exports["default"] = Toposort;
+  module.exports = exports.default;
 });
